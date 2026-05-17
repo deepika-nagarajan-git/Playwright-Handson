@@ -3,9 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
+  "scripts": {},
   "repository": {
     "type": "git",
     "url": "git+https://github.com/deepika-nagarajan-git/Playwright-Handson.git"
@@ -17,5 +15,9 @@
   "bugs": {
     "url": "https://github.com/deepika-nagarajan-git/Playwright-Handson/issues"
   },
-  "homepage": "https://github.com/deepika-nagarajan-git/Playwright-Handson#readme"
+  "homepage": "https://github.com/deepika-nagarajan-git/Playwright-Handson#readme",
+  "devDependencies": {
+    "@playwright/test": "^1.60.0",
+    "@types/node": "^25.8.0"
+  }
 }
