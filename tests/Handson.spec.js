@@ -4,6 +4,7 @@ dotenv.config();
 test('Testcase_Name', async ({browser})=>  //broswer declaration
 {
 const context = await browser.newContext(); //context declaration
+await context.clearCookies();   //clearCookies
 const page = await context.newPage(); //page declaration
 
 await page.goto('https://www.qacloud.dev/profile.html'); //launch url
@@ -80,6 +81,14 @@ await newPage.getByTestId(btn_BackToSandbox).waitFor();
 await newPage.getByTestId(btn_BackToSandbox).click();
 await expect (newPage.getByText('Dropdowns & Autocomplete')).toBeVisible();
 await newPage.getByText('Dropdowns & Autocomplete').click();
+//Native Dropdowns
+await newPage.locator('#nativeSelect').selectOption('Ruby');
+await newPage.waitForLoadState('load');
+await expect(newPage.locator('#nativeValue')).toHaveText('Selected: ruby');
+//Custom Dropdowns
+await newPage.locator('#customDropdownBtn').click();
+await newPage.getByTestId('dropdown-item-angular').click();
+await expect(newPage.locator('#customValue')).toHaveText('Selected: angular');
 
 
 });
