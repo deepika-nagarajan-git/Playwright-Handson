@@ -81,14 +81,35 @@ await newPage.getByTestId(btn_BackToSandbox).waitFor();
 await newPage.getByTestId(btn_BackToSandbox).click();
 await expect (newPage.getByText('Dropdowns & Autocomplete')).toBeVisible();
 await newPage.getByText('Dropdowns & Autocomplete').click();
-//Native Dropdowns
+//Native Dropdowns - use "selectOption method"
 await newPage.locator('#nativeSelect').selectOption('Ruby');
 await newPage.waitForLoadState('load');
 await expect(newPage.locator('#nativeValue')).toHaveText('Selected: ruby');
-//Custom Dropdowns
+//Custom Dropdowns - use click and select
 await newPage.locator('#customDropdownBtn').click();
 await newPage.getByTestId('dropdown-item-angular').click();
 await expect(newPage.locator('#customValue')).toHaveText('Selected: angular');
+//Searchable Dropdown
+await newPage.locator('#searchInput').fill('Australia');
+await newPage.getByTestId('search-option-0').click();
+await expect(newPage.locator('#searchValue')).toHaveText('Selected: Australia');
+//Multi-Select with Chips
+await newPage.locator('#multiSelect >> value=css').click();   //*[@id="multiSelect"]//*[@value="sql"]
+await expect (newPage.locator('.chip')).toBeVisible();
+await expect (newPage.locator('.chip >> text=sql')).toBeVisible();
+//Dependent Dropdowns
+await expect (newPage.locator('#citySelect')).toBeDisabled(); //child dropdown
+await newPage.locator('#countrySelect').selectOption('United Kingdom');  //parent dropdown
+await newPage.waitForLoadState('load');
+await expect (newPage.locator('#citySelect')).toBeEnabled();
+await newPage.locator('#citySelect').selectOption('Birmingham');
+await expect(newPage.locator('#dependentValue')).toHaveText('Selected: uk - birmingham');
+//Autocomplete with Debounce - suggestion-item
+await newPage.locator('#autocompleteInput').fill('Sony');
+await newPage.waitForLoadState('Load');
+await newPage.locator('.suggestion-item').click();
+await expect(newPage.getByTestId('autocompleteValue')).toHaveText('Selected: Sony');
+
 
 
 });
