@@ -1,5 +1,6 @@
 import {expect, test}from '@playwright/test';
 import dotenv from 'dotenv';  //.env declaration
+import { text } from 'node:stream/consumers';
 dotenv.config();
 test('Testcase_Name', async ({browser})=>  //browser declaration
 {
@@ -104,17 +105,27 @@ await expect (newPage.locator('#citySelect')).toBeEnabled();
 await newPage.locator('#citySelect').selectOption('Birmingham');
 await expect(newPage.locator('#dependentValue')).toHaveText('Selected: uk - birmingham');
 //Autocomplete with Debounce - suggestion-item
-await newPage.locator('#autocompleteInput').fill('Sony');
+await newPage.locator('#autocompleteInput').pressSequentially('Sony');   //pressSequentially
 await newPage.waitForLoadState('load');
-await newPage.locator('.suggestion-item').click();
+await newPage.locator('.suggestion-item', {name:'Sony'}).click();
 await expect(newPage.getByTestId('autocomplete-value')).toHaveText('Selected: Sony');
-//Alert - code need to be done here.
+let alert_msg='';
+newPage.on('dialog', async dialog =>{
+    alert_msg=dialog.message();  //fetch alert message
+    console.log(alert_msg);      //print alert message
+    await dialog.accept();       //accept alert message
+    
+});
+
+//newPage.on('dialog', dialog=>dialog.accept());   //accept alert
+await newPage.getByTestId('submit-button').click();
+await newPage.waitForTimeout(1000);
 await newPage.getByTestId(btn_BackToSandbox).click();
 await newPage.locator('.module-title:has-text("Data Tables")').click();  //*[@class='module-title' and text()="Data Tables"]
 await newPage.waitForLoadState('load');
 await newPage.locator('[aria-label="Search table"]').fill('Diana');
 await newPage.waitForLoadState('load');
-console.log(await newPage.locator('.expandable-row').count());
+console.log(`Table row count ${await newPage.locator('.expandable-row').count()}`);
 await newPage.getByRole('button', { name:'Edit'}).click();               //button[text()="Edit"]
 await expect(newPage.getByTestId('bulk-delete-button')).toBeDisabled();
 await newPage.locator('.row-checkbox').first().check();
@@ -122,11 +133,12 @@ await newPage.waitForLoadState('load');
 await expect(newPage.getByTestId('bulk-delete-button')).toBeEnabled();
 await newPage.getByRole('cell').nth(2).click();
 await expect(newPage.locator('.details-content')).toBeVisible();
+await newPage.getByRole('columnheader').count();        //count
+console.log(`Table headers ${await newPage.getByRole('columnheader').allTextContents()}`); //fetch table headers
+
 // clear
 await newPage.locator('[aria-label="Search table"]').clear();
 await newPage.locator('[aria-label="Search table"]').fill('Jo');
-//count
-console.log(await newPage.locator('.expandable-row').count());
 await newPage.getByTestId(btn_BackToSandbox).click();
 await newPage.locator('.module-title:has-text("Modals & Overlays")').click();
 await newPage.waitForLoadState('domcontentloaded');
@@ -165,7 +177,50 @@ await newPage.locator('#showInfoToast').click();
 await expect(newPage.locator('.toast-title', {hasText: 'Information'})).toBeVisible();
 await expect(newPage.locator('.toast-message', {hasText: 'Here is some useful information for you.'})).toBeVisible();
 await newPage.getByTestId(btn_BackToSandbox).click();
+await newPage.locator('.module-title').filter({hasText: 'Locator Practice'}).click();   //Filter method
+//get values from UI > Sort > assert 
+await newPage.waitForLoadState('load');
+let ui_values = await newPage.locator('.practice-section h3').allTextContents();
+console.log(ui_values);
+ui_values=ui_values.map(text => text.split('.')[1].split('\n')[0].trim()); //split and trim
+const sorted = ui_values.sort();
+console.log(`Sorted values ${sorted}`);
+const expected = ['Delayed Rendering Challenge','Dynamic ID Challenge', 'Iframe Challenge', 'Multiple Classes Challenge', 'Nested Structure Challenge', 'Shadow DOM Challenge', 'Visibility Toggle Challenge' ];
+expect(sorted).toEqual(expected);
 
+//Iframe
+const FramePage = newPage.frameLocator('#testFrame');
+await expect (FramePage.getByTestId('iframe-form-title')).toBeVisible();
+await FramePage.locator('#iframeSubmitBtn').click(); //submitting without entering text
+await FramePage.locator('#iframeInput').fill('Sample testing');
+await FramePage.locator('#iframeSubmitBtn').click();
+console.log (await FramePage.locator('.success-message').textContent());
+await newPage.goBack();
+await newPage.waitForTimeout(1000);
+await newPage.goForward();
+// Delayed content
+await newPage.locator('#triggerDelayedBtn').click();
+await newPage.waitForTimeout(500);
+await expect(newPage.locator('#triggerDelayedBtn')).toBeVisible();
+console.log (await newPage.locator('#delayedElement').allTextContents());
+//Visibility Toggle
+await expect(newPage.locator('#toggleVisibilityBtn')).toHaveText('Toggle Hidden Element');
+await newPage.locator('#toggleVisibilityBtn').click();
+await expect(newPage.locator('#toggleVisibilityBtn')).toHaveText('Hide Element');
+await expect(newPage.locator('#hiddenElement')).toBeVisible();
+await newPage.locator('#toggleVisibilityBtn').click();
+await expect(newPage.locator('#toggleVisibilityBtn')).toHaveText('Show Element');
+// Dynamic ID change
+console.log(await newPage.getByTestId('btn-dynamic-id').allTextContents());
+await newPage.waitForTimeout(3000);
+console.log(await newPage.getByTestId('btn-dynamic-id').allTextContents());
+await newPage.waitForTimeout(3000);
+console.log(await newPage.getByTestId('btn-dynamic-id').allTextContents());
+await newPage.getByTestId('btn-dynamic-id').click();
+// Nested Structure
+await newPage.locator('.level-1').locator('.level-2').locator('.level-3').locator('.level-4').getByTestId('btn-nested-target').click();
+//Multiple class
+await newPage.locator('.multi-class.primary-action.button-large.theme-purple.interactive-element').click();
 
 
 
