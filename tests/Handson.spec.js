@@ -109,16 +109,23 @@ await newPage.locator('#autocompleteInput').pressSequentially('Sony');   //press
 await newPage.waitForLoadState('load');
 await newPage.locator('.suggestion-item', {name:'Sony'}).click();
 await expect(newPage.getByTestId('autocomplete-value')).toHaveText('Selected: Sony');
-let alert_msg='';
-newPage.on('dialog', async dialog =>{
-    alert_msg=dialog.message();  //fetch alert message
-    console.log(alert_msg);      //print alert message
-    await dialog.accept();       //accept alert message
+//Below alert is used to declare globally on how the alert should behave. 
+// let alert_msg='';
+// newPage.on('dialog', async dialog =>{
+//     alert_msg=dialog.message();  //fetch alert message
+//     console.log(alert_msg);      //print alert message
+//     await dialog.accept();       //accept alert message
     
-});
+// });
+// await newPage.getByTestId('submit-button').click();
 
-//newPage.on('dialog', dialog=>dialog.accept());   //accept alert
-await newPage.getByTestId('submit-button').click();
+//Below alert handles individually.
+const AlertEvent1 = newPage.waitForEvent('dialog');
+newPage.getByTestId('submit-button').click();
+const Alert1=await AlertEvent1;
+console.log(Alert1.message());
+await Alert1.accept();
+
 await newPage.waitForTimeout(1000);
 await newPage.getByTestId(btn_BackToSandbox).click();
 await newPage.locator('.module-title:has-text("Data Tables")').click();  //*[@class='module-title' and text()="Data Tables"]
@@ -191,12 +198,18 @@ expect(sorted).toEqual(expected);
 //Iframe
 const FramePage = newPage.frameLocator('#testFrame');
 await expect (FramePage.getByTestId('iframe-form-title')).toBeVisible();
-await FramePage.locator('#iframeSubmitBtn').click(); //submitting without entering text
+//submitting without entering text to get 2nd Alert
+const AlertEvent2 = newPage.waitForEvent('dialog');
+FramePage.locator('#iframeSubmitBtn').click();
+const Alert2 = await AlertEvent2;
+console.log(Alert2.message());
+await Alert2.accept();
+await newPage.waitForTimeout(200);
 await FramePage.locator('#iframeInput').fill('Sample testing');
 await FramePage.locator('#iframeSubmitBtn').click();
 console.log (await FramePage.locator('.success-message').textContent());
 await newPage.goBack();
-await newPage.waitForTimeout(1000);
+await newPage.waitForTimeout(500);
 await newPage.goForward();
 // Delayed content
 await newPage.locator('#triggerDelayedBtn').click();
@@ -221,7 +234,8 @@ await newPage.getByTestId('btn-dynamic-id').click();
 await newPage.locator('.level-1').locator('.level-2').locator('.level-3').locator('.level-4').getByTestId('btn-nested-target').click();
 //Multiple class
 await newPage.locator('.multi-class.primary-action.button-large.theme-purple.interactive-element').click();
-
-
+await newPage.getByTestId(btn_BackToSandbox).click();
+//Advanced Login Simulation
+await newPage.locator('.module-title').filter({hasText: 'Advanced Login Simulator'}).click();   //Filter method
 
 });

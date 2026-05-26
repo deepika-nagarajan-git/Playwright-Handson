@@ -30,9 +30,10 @@ const [newPage] = await Promise.all([
  const Frame = newPage.frameLocator('#testFrame');
 await expect (Frame.getByTestId('iframe-form-title')).toBeVisible();
 
-const [Alert] = await Promise.all([
-    newPage.waitForEvent('dialog'),
-    Frame.locator('#iframeSubmitBtn').click()
-]);
-    await Alert.accept();
+const Alert1 = newPage.waitForEvent('dialog');
+Frame.locator('#iframeSubmitBtn').click();
+const Alert = await Alert1;
+let alert_msg = Alert.message();
+await Alert.accept();
+console.log(alert_msg);
 });
