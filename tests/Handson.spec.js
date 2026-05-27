@@ -237,5 +237,49 @@ await newPage.locator('.multi-class.primary-action.button-large.theme-purple.int
 await newPage.getByTestId(btn_BackToSandbox).click();
 //Advanced Login Simulation
 await newPage.locator('.module-title').filter({hasText: 'Advanced Login Simulator'}).click();   //Filter method
+await expect(newPage).toHaveURL('https://www.qacloud.dev/sandbox/login-advanced.html');  // to have url
+const test_userName = await newPage.getByTestId('cred1-username').textContent();
+const test_password = await newPage.getByTestId('cred1-password').textContent();
+
+const username_check = newPage.getByText('Username required (3–20 chars, letters / digits / underscore)');
+const length_check = newPage.locator('#chk-length');
+const UpperCase_check = newPage.locator('#chk-upper');
+const LowerCase_check = newPage.locator('#chk-lower');
+const Special_check = newPage.locator('#chk-special');
+const forbidden_check = newPage.locator('#chk-forbidden');
+
+await expect(username_check).toHaveCSS('color', 'rgb(139, 146, 171)');
+await expect(length_check).toHaveCSS('color', 'rgb(139, 146, 171)');
+await expect(UpperCase_check).toHaveCSS('color', 'rgb(139, 146, 171)');
+await expect(LowerCase_check).toHaveCSS('color', 'rgb(139, 146, 171)');
+await expect(Special_check).toHaveCSS('color', 'rgb(139, 146, 171)');
+await expect(forbidden_check).toHaveCSS('color', 'rgb(110, 231, 183)');
+
+await newPage.getByPlaceholder('e.g. qa_tester').pressSequentially('tes');
+await expect(username_check).toHaveCSS('color', 'rgb(110, 231, 183)');
+await newPage.getByPlaceholder('Min 10 chars, 2 special chars').pressSequentially('Aa');
+await newPage.waitForTimeout(200);
+await expect(UpperCase_check).toHaveCSS('color', 'rgb(110, 231, 183)');
+await expect(LowerCase_check).toHaveCSS('color', 'rgb(110, 231, 183)');
+await newPage.getByPlaceholder('Min 10 chars, 2 special chars').pressSequentially('Aa$@');
+await expect(Special_check).toHaveCSS('color', 'rgb(110, 231, 183)');
+await newPage.getByPlaceholder('Min 10 chars, 2 special chars').pressSequentially('Aabcd1324324$@');
+await expect(length_check).toHaveCSS('color', 'rgb(110, 231, 183)');
+await newPage.getByPlaceholder('Min 10 chars, 2 special chars').pressSequentially('Aabcd1329$@]');
+await expect(forbidden_check).toHaveCSS('color', 'rgb(139, 146, 171)');
+
+//happy path
+await newPage.getByPlaceholder('e.g. qa_tester').fill(test_userName);
+await newPage.getByPlaceholder('Min 10 chars, 2 special chars').fill(test_password);
+await expect(username_check).toHaveCSS('color', 'rgb(110, 231, 183)');
+await expect(length_check).toHaveCSS('color', 'rgb(110, 231, 183)');
+await expect(UpperCase_check).toHaveCSS('color', 'rgb(110, 231, 183)');
+await expect(LowerCase_check).toHaveCSS('color', 'rgb(110, 231, 183)');
+await expect(Special_check).toHaveCSS('color', 'rgb(110, 231, 183)');
+await expect(forbidden_check).toHaveCSS('color', 'rgb(110, 231, 183)');
+await newPage.screenshot();
+
+
+
 
 });
