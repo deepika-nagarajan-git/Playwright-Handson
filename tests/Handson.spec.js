@@ -4,6 +4,7 @@ import { text } from 'node:stream/consumers';
 dotenv.config();
 test('Testcase_Name', async ({browser})=>  //browser declaration
 {
+test.setTimeout(80000);
 const context = await browser.newContext(); //context declaration
 await context.clearCookies();   //clearCookies
 const page = await context.newPage(); //page declaration
@@ -278,6 +279,30 @@ await expect(LowerCase_check).toHaveCSS('color', 'rgb(110, 231, 183)');
 await expect(Special_check).toHaveCSS('color', 'rgb(110, 231, 183)');
 await expect(forbidden_check).toHaveCSS('color', 'rgb(110, 231, 183)');
 await newPage.screenshot();
+const question = await newPage.locator('.captcha-question').textContent();
+console.log(question);
+let ques_trim = question.split('=')[0].trimEnd();
+console.log(ques_trim);
+let answer =0;
+let converted =0;
+if(ques_trim.includes('÷')){
+    converted = ques_trim.replace('÷','/');
+    answer = eval (converted);
+    console.log(answer);
+}else if(ques_trim.includes('x')){
+    converted = ques_trim.replace('x','*');
+    answer = eval (converted);
+    console.log(answer);
+
+}else{
+    answer=eval(ques_trim);
+    console.log(answer);
+}
+
+await newPage.locator('.captcha-input').fill(answer.toString());
+await newPage.locator('#loginBtn').click();
+await expect(newPage.getByText('Login Successful!')).toBeVisible();
+
 
 
 
