@@ -21,11 +21,11 @@ test('sample',async({browser})=>{
     await page.locator('//*[@id="external-message"]').isVisible();
     await page.locator('(//*[text()="Textboxes"])[1]').isVisible();
     await page.locator('(//*[text()="Textboxes"])[1]').click();
-    await page.pause();
     await page.locator('(//h3[@class="text-xl font-semibold mb-2"])[1]').isVisible();
     console.log (await page.locator('(//h3[@class="text-xl font-semibold mb-2"])[1]').textContent());
     await page.locator('[placeholder="Enter text"]').fill('Hi there, we are testing input value function');
     console.log(await page.locator('[placeholder="Enter text"]').inputValue());
-
+    console.log('Number of pages ',context.pages().length);
+    
 
 });
