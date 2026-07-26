@@ -21,6 +21,7 @@ await page.locator('#loginUsername').fill('deepikanagarajancareer@gmail.com');
 await page.locator('#loginPassword').fill('Luffy-Kun2017.');
 await page.locator('[type="submit"]').first().click();
 
+
 const [newPage] = await Promise.all([
     context.waitForEvent('page'),
     page.locator('//a[@href="/sandbox/index.html"]').click()
