@@ -194,7 +194,7 @@ ui_values=ui_values.map(text => text.split('.')[1].split('\n')[0].trim()); //spl
 const sorted = ui_values.sort();
 console.log(`Sorted values ${sorted}`);
 const expected = ['Delayed Rendering Challenge','Dynamic ID Challenge', 'Iframe Challenge', 'Multiple Classes Challenge', 'Nested Structure Challenge', 'Shadow DOM Challenge', 'Visibility Toggle Challenge' ];
-expect(sorted).toEqual(expected);
+expect(sorted).toEqual(expected); 
 
 //Iframe
 const FramePage = newPage.frameLocator('#testFrame');
