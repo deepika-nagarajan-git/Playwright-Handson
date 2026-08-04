@@ -23,6 +23,7 @@ await expect(LoginForm).toContainText('Welcome Back');
 await expect(LoginForm).toContainText('Login to access your API key and dashboard');
 await page.locator('#loginUsername').fill(process.env.USERNAME_OR_EMAIL); //test data from .env
 await page.locator('#loginPassword').fill(process.env.PASSWORD);
+//deepikanagarajancareer@gmail.com     Luffy-Kun2017.
 await page.locator('[type="submit"]').first().click();
 await expect(page).toHaveTitle(title);
 
