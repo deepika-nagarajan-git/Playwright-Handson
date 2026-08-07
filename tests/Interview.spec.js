@@ -1,6 +1,6 @@
 import {test,expect}from '@playwright/test';
 
-test.describe.skip('storageState_Sample', ()=>{
+test.describe('storageState_Sample', ()=>{
     test.use({storageState : 'auth.json'});
     test('Login', async({page})=>{
         await page.goto('https://www.qacloud.dev/profile.html'); //launch url
@@ -38,7 +38,7 @@ test.describe.skip('storageState_Sample', ()=>{
     });
 });
 
-test.describe.skip('Switching_MultipleTabs', ()=>{
+test.describe('Switching_MultipleTabs', ()=>{
 test.use({storageState:'auth.json'});
 
 test('Creating multiple tabs and switching through them', async({page,context})=>{
@@ -106,3 +106,4 @@ test.describe('Frames and alert', ()=>{
     await iFramePage.locator('#iframeSubmitBtn').click();
     });
 });
+
