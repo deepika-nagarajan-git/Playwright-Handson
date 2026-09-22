@@ -37,4 +37,5 @@ const Alert = await Alert1;
 let alert_msg = Alert.message();
 await Alert.accept();
 console.log(alert_msg);
+
 });
